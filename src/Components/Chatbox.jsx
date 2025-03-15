@@ -74,7 +74,7 @@ const Chatbox = () => {
             </div>
             <div>
                 <input id="clientIdConnect" className={"input"} placeholder={"Enter client id to connect to here"} type={"text"} />
-                <input id={"client-id-connect-button"} type="button" className={"btn"} value={"click here to connect"} onClick={sendMessage} />
+                <input id={"client-id-connect-button"} type="button" className={"btn"} value={"click here to connect"} onClick={sendConnection} />
             </div>
         </>
     )
