@@ -1,28 +1,28 @@
-import React, { useState , useEffect} from 'react';
-import Peer from 'peerjs'
+import React, { useState, useEffect } from 'react';
+import Peer from 'peerjs';
 
 const Chatbot = () => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [peer, setPeer] = useState(new Peer());
-    const [peerData, setPeerData] = useState('');
-    const [peerTextBox ,setPeerTextBox] = useState('');
+    const [peerId, setPeerId] = useState('');
+    const [myPeerId, setMyPeerId] = useState('');
 
     // Receiving end
     useEffect(() => {
         peer.on('open', function(id) {
-            console.log(`Id: ${id}`);
+            console.log(`My peer ID is: ${id}`);
+            setMyPeerId(id);
             
             peer.on('connection', function (con) {
                 con.on('data', function (data) {
                     console.log('Incoming data: ', data);
-                    setPeerData(peerData + "\n" + JSON.stringify(data));
-                    con.send('REPLY');
+                    setMessages(prevMessages => [...prevMessages, data]);
                 });
             });
         });
-    }, []);
-    
+    }, [peer]);
+
     const handleSendClick = () => {
         if (message.trim()) {
             setMessages([...messages, message]);
@@ -33,6 +33,7 @@ const Chatbot = () => {
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
             handleSendClick();
+            sendMsg();
         }
     };
 
@@ -42,11 +43,17 @@ const Chatbot = () => {
         }
     };
 
+    const handlePeerIdChange = (e) => {
+        setPeerId(e.target.value);
+    };
+
     const sendMsg = () => {
-        let con = peer.connect(document.getElementById('textbox-id').value);
+        let con = peer.connect(peerId);
         con.on('open', () => {
-            console.log(`Successfully connected to peer ${document.getElementById('textbox-id').value}`)
-            con.send("This is some text that I decided to send you!!");
+            console.log(`Successfully connected to peer ${peerId}`);
+            con.send(message);
+            setMessages([...messages, message]);
+            setMessage('');
         });
     };
 
@@ -65,16 +72,23 @@ const Chatbot = () => {
                     placeholder="Type your message here..." 
                     value={message} 
                     onChange={handleChange} 
-                    onKeyPress={handleKeyPress}
+                    onKeyUp={handleKeyPress}
                     className="w-full p-2 border rounded"
                 />
-                <button onClick={handleSendClick} className="mt-2 p-2 bg-blue-500 text-white rounded">
-                    Send
+                <input 
+                    type="text" 
+                    placeholder="Enter peer ID..." 
+                    value={peerId} 
+                    onChange={handlePeerIdChange} 
+                    className="w-full p-2 border rounded mt-4"
+                />
+                <button onClick={sendMsg} className="mt-2 p-2 bg-blue-500 text-white rounded">
+                    Connect and Send Message
                 </button>
+                <div className="mt-4">
+                    <strong>Your Peer ID: </strong>{myPeerId}
+                </div>
             </div>
-            <input id="textbox-id" type="text" style={{width: '200px'}}></input>
-            <button onClick={sendMsg}>Send msg</button>
-            <div>{peerData}</div>
         </div>
     );
 };

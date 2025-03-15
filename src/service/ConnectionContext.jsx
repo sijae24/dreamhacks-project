@@ -36,7 +36,10 @@ class ConnectionContext {
     }
 
     sendMessage(text) {
-        // TODO: send message to other clients
+        this._msgs.push(text);
+        this._clients.forEach((client, id) => {
+            client.send(text);
+        });
     }
 }
 
