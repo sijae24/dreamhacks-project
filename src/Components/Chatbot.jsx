@@ -1,32 +1,30 @@
-import React, { useState , useEffect} from 'react';
-import Peer from 'peerjs'
+import React, { useState, useEffect } from 'react';
+import Peer from 'peerjs';
+import TextTranslator from '../service/TextTranslator';
 
 const Chatbot = () => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
-    const [peer, setPeer] = useState(new Peer());
     const [peerData, setPeerData] = useState('');
-    const [peerTextBox ,setPeerTextBox] = useState('');
+    const [peerTextBox, setPeerTextBox] = useState('');
 
-    // Receiving end
+    // Create an instance of TextTranslator
+    const translator = new TextTranslator();
+    translator.toLang = 'es'; // Change to desired language
+
     useEffect(() => {
-        peer.on('open', function(id) {
-            console.log(`Id: ${id}`);
-            
-            peer.on('connection', function (con) {
-                con.on('data', function (data) {
-                    console.log('Incoming data: ', data);
-                    setPeerData(peerData + "\n" + JSON.stringify(data));
-                    con.send('REPLY');
-                });
-            });
-        });
+        // PeerJS setup can go here
     }, []);
-    
-    const handleSendClick = () => {
+
+    const handleSendClick = async () => {
         if (message.trim()) {
-            setMessages([...messages, message]);
-            setMessage('');
+            try {
+                const translatedText = await translator.translate(message);
+                setMessages([...messages, translatedText]); // Store translated message
+                setMessage('');
+            } catch (error) {
+                console.error("Translation error:", error);
+            }
         }
     };
 
@@ -42,29 +40,21 @@ const Chatbot = () => {
         }
     };
 
-    const sendMsg = () => {
-        let con = peer.connect(document.getElementById('textbox-id').value);
-        con.on('open', () => {
-            console.log(`Successfully connected to peer ${document.getElementById('textbox-id').value}`)
-            con.send("This is some text that I decided to send you!!");
-        });
-    };
-
     return (
         <div className="flex justify-center items-center h-screen">
             <div className="w-full max-w-md p-4 text-center">
                 <div className="mb-4">
                     {messages.map((msg, index) => (
-                        <div key={index} className="bg-black-200 p-2 rounded mb-2">
+                        <div key={index} className="bg-gray-200 p-2 rounded mb-2">
                             {msg}
                         </div>
                     ))}
                 </div>
-                <input 
-                    type="text" 
-                    placeholder="Type your message here..." 
-                    value={message} 
-                    onChange={handleChange} 
+                <input
+                    type="text"
+                    placeholder="Type your message here..."
+                    value={message}
+                    onChange={handleChange}
                     onKeyPress={handleKeyPress}
                     className="w-full p-2 border rounded"
                 />
@@ -72,9 +62,6 @@ const Chatbot = () => {
                     Send
                 </button>
             </div>
-            <input id="textbox-id" type="text" style={{width: '200px'}}></input>
-            <button onClick={sendMsg}>Send msg</button>
-            <div>{peerData}</div>
         </div>
     );
 };
