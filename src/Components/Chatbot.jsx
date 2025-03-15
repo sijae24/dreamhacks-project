@@ -14,7 +14,7 @@ const Chatbot = () => {
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className='flex flex-col items-center'>
             <h1>Chatbot</h1>
             <input 
                 type="text" 

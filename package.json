@@ -12,8 +12,10 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.0.14",
     "daisyui": "^5.0.4",
+    "peerjs": "^1.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-router-dom": "^7.3.0",
     "tailwindcss": "^4.0.14"
   },
   "devDependencies": {

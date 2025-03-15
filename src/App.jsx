@@ -1,9 +1,12 @@
-
 import React from 'react'
-import Chatbot from './Components/Chatbot' // Import the Chatbot component
+import Hero from './components/Hero'
+import Chatbot from './Components/Chatbot' 
+
 const App = () => {
+
   return (
     <div>
+      <Hero />
       <Chatbot /> 
     </div>
   )
