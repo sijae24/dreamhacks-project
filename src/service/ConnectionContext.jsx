@@ -28,6 +28,7 @@ class ConnectionContext {
             }
 
             this._peerInstance.on('connection', (con) => {
+                console.log("accepted conn");
                 this._addConnection(con);
             });
         });
@@ -113,6 +114,7 @@ class ConnectionContext {
                 let peerId = packet.data.id;
                 let conn = this._peerInstance.connect(peerId);
                 this._addConnection(conn);
+                console.log("send conn");
                 break;
         }
     }

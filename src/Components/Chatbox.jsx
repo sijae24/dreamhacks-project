@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ConnectionContext from '../service/ConnectionContext';
+import User from '../service/User';
 
 const Chatbox = () => {
     const [messages, setMessages] = useState([]);
@@ -34,7 +35,7 @@ const Chatbox = () => {
                 id: clientId
             }
         }
-        connectionContext._handlePacket(packet);
+        connectionContext._handlePacket(new User(connectionContext._clientId), packet);
     };
 
     return (
