@@ -1,0 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Unkempt:wght@400;700&display=swap');
+
+.chatbot-message {
+    font-family: 'Unkempt', cursive;
+    font-size: 1em;
+}
