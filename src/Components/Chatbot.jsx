@@ -16,12 +16,11 @@ const Chatbot = () => {
             peer.on('connection', function (con) {
                 con.on('data', function (data) {
                     console.log('Incoming data: ', data);
-                    setPeerData(JSON.stringify(data));
+                    setPeerData(peerData + "\n" + JSON.stringify(data));
                     con.send('REPLY');
                 });
             });
         });
-  
     }, []);
     
     const handleSendClick = () => {

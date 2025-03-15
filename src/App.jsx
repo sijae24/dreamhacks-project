@@ -6,7 +6,7 @@ const App = () => {
 
   return (
     <div>
-      <Hero />
+      {/* <Hero /> */}
       <Chatbot /> 
     </div>
   )
