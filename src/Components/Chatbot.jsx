@@ -42,7 +42,7 @@ const Chatbot = () => {
                     value={message} 
                     onChange={handleChange} 
                     onKeyUp={handleKeyPress}
-                    className="w-full p-2 border rounded"
+                    className="w-full p-2 border rounded chatbot-message"
                 />
                 <button onClick={handleSendClick} className="mt-2 p-2 bg-blue-500 text-white rounded">
                     Send
