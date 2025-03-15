@@ -18,11 +18,11 @@ const Chatbot = () => {
     };
 
     return (
-        <div className="justify-center items-center flex h-screen">
-            <div className="w-full max-w-md p-4 text-center">
+        <div className="flex justify-center items-center h-screen">
+            <div className="w-full smax-w-md p-4 text-center">
                 <div className="mb-4">
                     {messages.map((msg, index) => (
-                        <div key={index} className="bg-gray-200 p-2 rounded mb-2">
+                        <div key={index} className="bg-black-200 p-2 rounded mb-2">
                             {msg}
                         </div>
                     ))}
