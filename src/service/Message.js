@@ -1,13 +1,17 @@
 export default class Message {
 
-    constructor(user, time, messageText) {
-        this._user = user;
+    constructor(userId, time, messageText) {
+        this._userId = userId;
         this._messageText = messageText;
         this._time = time;
     }
 
-    get user() {
-        return this._user;
+    get messageText() {
+        return this._messageText;
+    }
+
+    get userId() {
+        return this._userId;
     }
 
     get sendTime() {

@@ -1,17 +1,13 @@
 export default class User {
-    constructor(connection) {
-        this._connection = connection;
+    constructor(peerId) {
+        this._peerId = peerId;
     }
     
     get peerId() {
         return this._connection.id;
     }
 
-    get connection() {
-        return this._connection;
-    }
-
-    sendMessage(text) {
-        this._connection.send(text);
+    get userName() {
+        return this._peerId;
     }
 }

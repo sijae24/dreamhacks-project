@@ -1,11 +1,12 @@
 import Peer from 'peerjs';
-import User from './User';
 import Message from './Message';
+import User from './User';
 
 class ConnectionContext {
     constructor() {
         this._connected = false;
 
+        this._userId = null;
         this._msgs = [];
         this._users = new Map();
 
@@ -19,6 +20,9 @@ class ConnectionContext {
 
         this._peerInstance.on('open', (id) => {
             this._connected = true;
+            this._userId = id;
+            console.log(`user id is: ${this._userId}`);
+
             for (const listener of this._serverConnectionListeners) {
                 listener(this._peerInstance);
             }
@@ -31,6 +35,10 @@ class ConnectionContext {
 
     get isConnected() {
         return this._connected;
+    }
+
+    get peerId() {
+        return this.isConnected() ? null : this._userId;
     }
 
     get msgs() { return this._msgs; }
@@ -49,12 +57,33 @@ class ConnectionContext {
     }
 
     broadcastMessage(text) {
+        if (this._userId == null)
+            return;
+
         // TODO: send message to other clients
+        let msg = new Message(this._userId, Date.now(), text);
+
+        for (let { user, conn } of this._users.values()) {
+            let packet = {
+                type: 0,
+                data: {
+                    time: Date.now(),
+                    content: text
+                }
+            }
+            conn.send(JSON.stringify(packet));
+        }
+
+        this._msgs.push(msg);
+
+        for(const msgListener of this._messageListeners) {
+            msgListener(msg);
+        }
     }
 
     _addUser(con) {
         let user = new User(con);
-        this._users.set(con.id, user);
+        this._users.set(con.id, { user, con });
         return user;
     }
 
@@ -68,11 +97,11 @@ class ConnectionContext {
         });
     }
 
-    _handlePacket(user, packet) {
+    _handlePacket(userFrom, packet) {
         switch (packet.type) {
             case 0:
                 // message packet
-                let msg = new Message(user, packet.data.time, packet.data.content);
+                let msg = new Message(userFrom.peerId, packet.data.time, packet.data.content);
                 this._msgs.push(msg);
 
                 for(let messageListeneer of this._messageListeners) {
@@ -86,6 +115,14 @@ class ConnectionContext {
                 this._addConnection(conn);
                 break;
         }
+    }
+
+    isCurrentUser(peerId) {
+        return peerId === this._userId;
+    }
+
+    getUserFor(peerId) {
+        return this._users.get(peerId).user;
     }
 }
 
