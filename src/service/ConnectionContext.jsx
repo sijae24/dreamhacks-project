@@ -64,7 +64,7 @@ class ConnectionContext {
         // TODO: send message to other clients
         let msg = new Message(this._userId, Date.now(), text);
 
-        for (let { user, conn } of this._users.values()) {
+        for (let { user, con } of this._users.values()) {
             let packet = {
                 type: 0,
                 data: {
@@ -72,7 +72,7 @@ class ConnectionContext {
                     content: text
                 }
             }
-            conn.send(JSON.stringify(packet));
+            con.send(JSON.stringify(packet));
         }
 
         this._msgs.push(msg);
