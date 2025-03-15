@@ -1,7 +1,6 @@
-import React from "react";
-import {BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Hero from "./components/Hero";
-import Chatbot from "./components/Chatbot";
+import React from 'react'
+import Hero from './components/Hero'
+import Chatbot from './Components/Chatbot' 
 
 const App = () => {
   const routes = [
