@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './Chatbot.css';
 
 const Chatbot = () => {
     const [message, setMessage] = useState('');
@@ -30,7 +29,7 @@ const Chatbot = () => {
                 <div className="mb-4">
                     {messages.map((msg, index) => (
                         <div key={index} className="chat chat-start">
-                            <div className="chat-bubble break-words chatbot-message">
+                            <div className="chat-bubble break-words">
                                 {msg}
                             </div>
                         </div>
@@ -42,7 +41,7 @@ const Chatbot = () => {
                     value={message} 
                     onChange={handleChange} 
                     onKeyUp={handleKeyPress}
-                    className="w-full p-2 border rounded chatbot-message"
+                    className="w-full p-2 border rounded"
                 />
                 <button onClick={handleSendClick} className="mt-2 p-2 bg-blue-500 text-white rounded">
                     Send
