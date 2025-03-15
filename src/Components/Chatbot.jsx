@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Peer from 'peerjs';
+import ReactMarkdown from 'react-markdown';
 
 const Chatbot = () => {
     const [message, setMessage] = useState('');
@@ -17,7 +18,7 @@ const Chatbot = () => {
         });
         newPeer.on('connection', connection => {
             connection.on('data', data => {
-                setMessages(prevMessages => [...prevMessages, data]);
+                setMessages(prevMessages => [...prevMessages, { message: data, received: true }]);
             });
             setConn(connection);
         });
@@ -26,7 +27,7 @@ const Chatbot = () => {
 
     const handleSendClick = () => {
         if (message.trim()) {
-            setMessages([...messages, message]);
+            setMessages([...messages, { message, received: false }]);
             if (conn) {
                 conn.send(message);
             }
@@ -58,7 +59,7 @@ const Chatbot = () => {
                 setConn(connection);
             });
             connection.on('data', data => {
-                setMessages(prevMessages => [...prevMessages, data]);
+                setMessages(prevMessages => [...prevMessages, { message: data, received: true }]);
             });
         }
     };
@@ -68,11 +69,19 @@ const Chatbot = () => {
             <div className="w-full max-w-md p-4 text-center">
                 <div className="mb-4">
                     {messages.map((msg, index) => (
-                        <div key={index} className="chat chat-start">
-                            <div className="chat-bubble break-words">
-                                {msg}
+                        msg.received ? (
+                            <div key={index} className="chat chat-end">
+                                <div className="chat-bubble chat-bubble-info">
+                                    <ReactMarkdown>{msg.message}</ReactMarkdown>
+                                </div>
                             </div>
-                        </div>
+                        ) : (
+                            <div key={index} className="chat chat-start">
+                                <div className="chat-bubble break-words">
+                                    {msg.message}
+                                </div>
+                            </div>
+                        )
                     ))}
                 </div>
                 <input 
