@@ -1,14 +1,22 @@
 import Peer from 'peerjs';
 
 class ConnectionContext {
-    constructor(thisClient) {
-        this._thisClient = thisClient;
+    constructor() {
+        this._connected = false;
+        this._thisClient = new Peer();
+        this._thisClient.on('open', () => {
+            this._connected = true;
+        });
+
         this._msgs = [];
         this._clients = new Map();
+
+        this._messageListeners = [];
+        this._connectionListeners = [];
     }
 
-    addMessage(msg){
-        this._msgs.push(msg);
+    get isConnected() {
+        return this._connected;
     }
 
     addClient(id, client) {
@@ -18,6 +26,18 @@ class ConnectionContext {
     get thisClient() { return this._thisClient; }
     get msgs() { return this._msgs; }
     get clients() { return this._clients; }
+
+    addConnectionListener(connListenerFunc) {
+        this._connectionListeners.push(connListenerFunc);
+    }
+
+    addMessageListener(listenerFunc) {
+        this._messageListeners.push(listenerFunc);
+    }
+
+    sendMessage(text) {
+        // TODO: send message to other clients
+    }
 }
 
 export default ConnectionContext;

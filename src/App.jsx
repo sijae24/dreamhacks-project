@@ -1,5 +1,5 @@
 import React from 'react'
-import Hero from './components/Hero'
+import Hero from './Components/Hero'
 import Chatbot from './Components/Chatbot' 
 
 const App = () => {
