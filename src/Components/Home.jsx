@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown'; // to render markdown responses
 
 export default function Home() {
     const [userInput, setUserInput] = useState('');
+    const [aiPersonality, setAiPersonality] = useState('');
     const [response, setResponse] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -12,8 +13,13 @@ export default function Home() {
         setUserInput(e.target.value);
     };
 
+    const handleAiPersonalityInput = (e) => {
+        setAiPersonality(e.target.value);
+    };
+
     const handleClear = () => {
         setUserInput('');
+        setAiPersonality('');
         setResponse([]);
         setIsLoading(false);
     };
@@ -26,7 +32,8 @@ export default function Home() {
 
         setIsLoading(true);
         try {
-            const res = await generateContent(userInput);
+            const prompt = aiPersonality ? `Act like ${aiPersonality}. ${userInput}` : userInput;
+            const res = await generateContent(prompt);
             setResponse(prevResponse => [
                 ...prevResponse,
                 { type: "user", message: userInput },
@@ -79,6 +86,14 @@ export default function Home() {
 
                 <div className="input-container">
                     <button onClick={handleClear} className="clear-btn btn mt-2 p-2 bg-red-500 text-white rounded">Clear</button>
+
+                    <input
+                        type="text"
+                        value={aiPersonality}
+                        onChange={handleAiPersonalityInput}
+                        placeholder="Type AI personality here..."
+                        className="w-full p-2 border rounded mt-2"
+                    />
 
                     <input
                         type="text"
