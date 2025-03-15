@@ -28,8 +28,10 @@ const Chatbot = () => {
             <div className="w-full max-w-md p-4 text-center">
                 <div className="mb-4">
                     {messages.map((msg, index) => (
-                        <div key={index} className="bg-black-200 p-2 rounded mb-2">
-                            {msg}
+                        <div key={index} className="chat chat-start">
+                            <div className="chat-bubble">
+                                {msg}
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -38,7 +40,7 @@ const Chatbot = () => {
                     placeholder="Type your message here..." 
                     value={message} 
                     onChange={handleChange} 
-                    onKeyPress={handleKeyPress}
+                    onKeyUp={handleKeyPress}
                     className="w-full p-2 border rounded"
                 />
                 <button onClick={handleSendClick} className="mt-2 p-2 bg-blue-500 text-white rounded">
