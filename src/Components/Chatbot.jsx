@@ -17,9 +17,15 @@ const Chatbot = () => {
         }
     };
 
+    const handleChange = (e) => {
+        if (e.target.value.length <= 500) {
+            setMessage(e.target.value);
+        }
+    };
+
     return (
         <div className="flex justify-center items-center h-screen">
-            <div className="w-full smax-w-md p-4 text-center">
+            <div className="w-full max-w-md p-4 text-center">
                 <div className="mb-4">
                     {messages.map((msg, index) => (
                         <div key={index} className="bg-black-200 p-2 rounded mb-2">
@@ -31,7 +37,7 @@ const Chatbot = () => {
                     type="text" 
                     placeholder="Type your message here..." 
                     value={message} 
-                    onChange={(e) => setMessage(e.target.value)} 
+                    onChange={handleChange} 
                     onKeyPress={handleKeyPress}
                     className="w-full p-2 border rounded"
                 />
