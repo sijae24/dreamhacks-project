@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './Chatbot.css';
 
 const Chatbot = () => {
     const [message, setMessage] = useState('');
@@ -29,7 +30,7 @@ const Chatbot = () => {
                 <div className="mb-4">
                     {messages.map((msg, index) => (
                         <div key={index} className="chat chat-start">
-                            <div className="chat-bubble">
+                            <div className="chat-bubble break-words chatbot-message">
                                 {msg}
                             </div>
                         </div>
