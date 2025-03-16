@@ -5,13 +5,8 @@ import Chatbot from './Components/Chatbot'
 const App = () => {
   return (
     <div>
-<<<<<<< HEAD
-      {/* <Hero /> */}
-      <Chatbot /> 
-=======
       <Hero />
       <Chatbot />
->>>>>>> main
     </div>
   );
 };
