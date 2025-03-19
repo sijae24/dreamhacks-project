@@ -136,7 +136,7 @@ const Chat = () => {
     };
 
     return (
-        <div className="flex justify-center items-center h-screen bg-base-200">
+        <div name="chat" className="flex justify-center items-center h-screen bg-base-200">
             <div className="fixed bottom-4 right-4 z-50">
                 <button
                     className="btn bg-red-500 hover:bg-red-800"

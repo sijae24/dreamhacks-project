@@ -1,13 +1,7 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-scroll'
 
 const Hero = () => {
-  const scrollToChat = () => {
-    window.scrollTo({
-      top: window.innerHeight,
-      behavior: 'smooth'
-    });
-  };
 
   return (
     <div className="hero bg-base text-200 min-h-screen">
@@ -18,8 +12,10 @@ const Hero = () => {
           <p className="py-6">
             Do you want to chat with your friends online? Connect with them here.
           </p>
-          <button className="btn bg-red-500 hover:bg-red-800" onClick={scrollToChat}>
+          <button className="btn bg-red-500 hover:bg-red-800" >
+            <Link to="chat" smooth duration={500}> 
             Chat Now
+            </Link>
           </button>
         </div>
       </div>
