@@ -1,12 +1,11 @@
-import React from 'react'
-import Hero from './Components/Hero'
-import Chatbot from './Components/Chatbot' 
-
+import React from "react";
+import Hero from "./components/Hero";
+import Chat from "./components/Chat";
 const App = () => {
   return (
     <div>
       <Hero />
-      <Chatbot />
+      <Chat />
     </div>
   );
 };

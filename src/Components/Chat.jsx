@@ -3,7 +3,7 @@ import Peer from "peerjs";
 import ReactMarkdown from "react-markdown";
 import TextTranslator from "../service/TextTranslator";
 
-const Chatbot = () => {
+const Chat = () => {
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
     const [peerId, setPeerId] = useState("");
@@ -46,6 +46,12 @@ const Chatbot = () => {
     const handleKeyPress = (event) => {
         if (event.key === "Enter") {
             handleSendClick();
+        }
+    };
+
+    const handleKeyPressPeerId = (event) => {
+        if (event.key === "Enter") {
+            handleConnectClick();
         }
     };
 
@@ -101,13 +107,15 @@ const Chatbot = () => {
                 <div className="mb-4 overflow-y-auto max-h-64">
                     {messages.map((msg, index) => (
                         msg.received ? (
-                            <div key={index} className="chat chat-end">
+                            <div key={index} className="chat chat-start">
+                                <div className="chat-header">Other</div>
                                 <div className="chat-bubble chat-bubble-info text-white">
                                     <ReactMarkdown>{msg.message}</ReactMarkdown>
                                 </div>
                             </div>
                         ) : (
-                            <div key={index} className="chat chat-start">
+                            <div key={index} className="chat chat-end">
+                                <div className="chat-header">You</div>
                                 <div className="chat-bubble bg-blue-500 break-words chatbot-message text-white">
                                     {msg.message}
                                 </div>
@@ -137,6 +145,7 @@ const Chatbot = () => {
                         placeholder="Enter peer ID..."
                         value={peerId}
                         onChange={handlePeerIdChange}
+                        onKeyUp={handleKeyPressPeerId}
                         className="w-full p-2 border rounded input input-bordered"
                     />
                     <button
@@ -186,4 +195,4 @@ const Chatbot = () => {
     );
 };
 
-export default Chatbot;
+export default Chat;
