@@ -12,6 +12,7 @@ const Chat = () => {
     const [myPeerId, setMyPeerId] = useState("");
     const [language, setLanguage] = useState("en");
     const [isLanguagePopupOpen, setIsLanguagePopupOpen] = useState(false);
+    const [connectionStatus, setConnectionStatus] = useState("disconnected"); 
 
     useEffect(() => {
         const newPeer = new Peer();
@@ -20,13 +21,34 @@ const Chat = () => {
             setMyPeerId(id);
         });
         newPeer.on("connection", (connection) => {
+            setConnectionStatus("connected");
             connection.on("data", async (data) => {
                 const translatedMessage = await translator.translate(data);
-                setMessages((prevMessages) => [...prevMessages, { message: translatedMessage, received: true }]);
+                const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                setMessages((prevMessages) => [...prevMessages, { 
+                    message: translatedMessage, 
+                    received: true,
+                    timestamp: timestamp
+                }]);
             });
+            
+            connection.on("close", () => {
+                setConnectionStatus("disconnected");
+            });
+            
+            connection.on("error", () => {
+                setConnectionStatus("disconnected");
+            });
+            
             setConn(connection);
         });
         setPeer(newPeer);
+        
+        return () => {
+            if (peer) {
+                peer.destroy();
+            }
+        };
     }, []);
 
     const translator = new TextTranslator();
@@ -35,7 +57,12 @@ const Chat = () => {
     const handleSendClick = async () => {
         if (message.trim()) {
             const translatedMessage = await translator.translate(message);
-            setMessages([...messages, { message: translatedMessage, received: false }]);
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            setMessages([...messages, { 
+                message: translatedMessage, 
+                received: false,
+                timestamp: timestamp
+            }]);
             if (conn) {
                 conn.send(translatedMessage);
             }
@@ -67,15 +94,44 @@ const Chat = () => {
 
     const handleConnectClick = () => {
         if (peer && peerId.trim()) {
+            setConnectionStatus("connecting");
             const connection = peer.connect(peerId);
+            
             connection.on("open", () => {
                 console.log("Connected to: " + peerId);
+                setConnectionStatus("connected");
                 setConn(connection);
             });
+            
             connection.on("data", async (data) => {
                 const translatedMessage = await translator.translate(data);
-                setMessages((prevMessages) => [...prevMessages, { message: translatedMessage, received: true }]);
+                const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                setMessages((prevMessages) => [...prevMessages, { 
+                    message: translatedMessage, 
+                    received: true,
+                    timestamp: timestamp
+                }]);
             });
+            
+            connection.on("close", () => {
+                setConnectionStatus("disconnected");
+            });
+            
+            connection.on("error", () => {
+                setConnectionStatus("disconnected");
+            });
+        }
+    };
+
+    const renderConnectionStatus = () => {
+        switch(connectionStatus) {
+            case "connected":
+                return <span className="text-green-500">● Connected</span>;
+            case "connecting":
+                return <span className="text-yellow-500">● Connecting...</span>;
+            case "disconnected":
+            default:
+                return <span className="text-red-500">● Disconnected</span>;
         }
     };
 
@@ -108,14 +164,20 @@ const Chat = () => {
                     {messages.map((msg, index) => (
                         msg.received ? (
                             <div key={index} className="chat chat-start">
-                                <div className="chat-header">Other</div>
+                                <div className="chat-header">
+                                    Other
+                                    <time className="text-xs opacity-50 ml-2">{msg.timestamp}</time>
+                                </div>
                                 <div className="chat-bubble chat-bubble-info text-white">
                                     <ReactMarkdown>{msg.message}</ReactMarkdown>
                                 </div>
                             </div>
                         ) : (
                             <div key={index} className="chat chat-end">
-                                <div className="chat-header">You</div>
+                                <div className="chat-header">
+                                    You
+                                    <time className="text-xs opacity-50 ml-2">{msg.timestamp}</time>
+                                </div>
                                 <div className="chat-bubble bg-blue-500 break-words chatbot-message text-white">
                                     {msg.message}
                                 </div>
@@ -140,6 +202,9 @@ const Chat = () => {
                     </button>
                 </div>
                 <div className="mt-4">
+                    <div className="flex items-center justify-between mb-2">
+                        <span>Connection Status: {renderConnectionStatus()}</span>
+                    </div>
                     <input
                         type="text"
                         placeholder="Enter peer ID..."
@@ -151,8 +216,9 @@ const Chat = () => {
                     <button
                         onClick={handleConnectClick}
                         className="btn bg-red-500 hover:bg-red-800 mt-2"
+                        disabled={connectionStatus === "connecting"}
                     >
-                        Connect
+                        {connectionStatus === "connecting" ? "Connecting..." : "Connect"}
                     </button>
                 </div>
                 <div className="mt-4">
@@ -165,7 +231,7 @@ const Chat = () => {
                     {isLanguagePopupOpen && (
                         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                             <div className="bg-white p-4 rounded-lg shadow-lg">
-                                <h3 className="text-lg font-bold mb-2">Choose Language</h3>
+                                <h3 className="text-lg font-bold text-base-200 mb-2">Choose Language</h3>
                                 <select
                                     className="p-2 border rounded w-full bg-gray-100 text-black"
                                     value={language}
