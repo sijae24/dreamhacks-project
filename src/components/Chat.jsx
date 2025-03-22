@@ -17,7 +17,7 @@ const Chat = () => {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(myPeerId);
-    console.log("Peer id copied" + myPeerId);
+    console.log("Peer id copied " + myPeerId);
     setCopied(true);
     setTimeout(() => {
       setCopied(false);
@@ -26,46 +26,55 @@ const Chat = () => {
 
   useEffect(() => {
     const newPeer = new Peer();
+    
     newPeer.on("open", (id) => {
       console.log("My peer ID is: " + id);
       setMyPeerId(id);
     });
+  
     newPeer.on("connection", (connection) => {
       setConnectionStatus("connected");
+  
       connection.on("data", async (data) => {
-        const translatedMessage = await translator.translate(data);
-        const timestamp = new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            message: translatedMessage,
-            received: true,
-            timestamp: timestamp,
-          },
-        ]);
+        if (data.type === "peer-id") {
+          setPeerId(data.id); 
+        } else {
+          const translatedMessage = await translator.translate(data);
+          const timestamp = new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              message: translatedMessage,
+              received: true,
+              timestamp: timestamp,
+            },
+          ]);
+        }
       });
-
+  
       connection.on("close", () => {
         setConnectionStatus("disconnected");
       });
-
+  
       connection.on("error", () => {
         setConnectionStatus("disconnected");
       });
-
+  
       setConn(connection);
     });
+  
     setPeer(newPeer);
-
+  
     return () => {
       if (peer) {
         peer.destroy();
       }
     };
   }, []);
+  
 
   const translator = new TextTranslator();
   translator.toLang = language;
@@ -128,38 +137,25 @@ const Chat = () => {
     if (peer && peerId.trim()) {
       setConnectionStatus("connecting");
       const connection = peer.connect(peerId);
-
+  
       connection.on("open", () => {
         console.log("Connected to: " + peerId);
         setConnectionStatus("connected");
         setConn(connection);
+  
+        connection.send({ type: "peer-id", id: myPeerId });
       });
-
-      connection.on("data", async (data) => {
-        const translatedMessage = await translator.translate(data);
-        const timestamp = new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            message: translatedMessage,
-            received: true,
-            timestamp: timestamp,
-          },
-        ]);
-      });
-
+  
       connection.on("close", () => {
         setConnectionStatus("disconnected");
       });
-
+  
       connection.on("error", () => {
         setConnectionStatus("disconnected");
       });
     }
   };
+  
 
   const renderConnectionStatus = () => {
     switch (connectionStatus) {
@@ -226,7 +222,7 @@ const Chat = () => {
                     {msg.timestamp}
                   </time>
                 </div>
-                <div className="chat-bubble chat-bubble-info text-white">
+                <div className="chat-bubble chat-blue-500 text-white">
                   <ReactMarkdown>{msg.message}</ReactMarkdown>
                 </div>
               </div>
@@ -288,7 +284,6 @@ const Chat = () => {
                 ? "bg-yellow-500 cursor-not-allowed"
                 : "bg-blue-500 hover:bg-blue-800"
             }`}
-            disabled={connectionStatus === "connecting"}
           >
             {connectionStatus === "connected"
               ? "Disconnect"
