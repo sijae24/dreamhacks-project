@@ -137,19 +137,36 @@ const Chat = () => {
     if (peer && peerId.trim()) {
       setConnectionStatus("connecting");
       const connection = peer.connect(peerId);
+      
+      connection.on("data", async (data) => {
+        if (data.type === "peer-id") {
+          setPeerId(data.id); 
+        } else {
+          const translatedMessage = await translator.translate(data);
+          const timestamp = new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              message: translatedMessage,
+              received: true,
+              timestamp: timestamp,
+            },
+          ]);
+        }
+      });
   
       connection.on("open", () => {
         console.log("Connected to: " + peerId);
         setConnectionStatus("connected");
         setConn(connection);
-  
         connection.send({ type: "peer-id", id: myPeerId });
       });
-  
       connection.on("close", () => {
         setConnectionStatus("disconnected");
       });
-  
       connection.on("error", () => {
         setConnectionStatus("disconnected");
       });
