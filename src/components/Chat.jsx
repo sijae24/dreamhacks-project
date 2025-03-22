@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Peer from "peerjs";
 import ReactMarkdown from "react-markdown";
 import TextTranslator from "../service/TextTranslator";
@@ -14,6 +14,15 @@ const Chat = () => {
   const [isLanguagePopupOpen, setIsLanguagePopupOpen] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState("disconnected");
   const [copied, setCopied] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+        messagesEndRef.current.scrollTop = 
+        messagesEndRef.current.scrollHeight;
+      }
+  }, [messages]);
+
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(myPeerId);
@@ -229,7 +238,8 @@ const Chat = () => {
       </div>
       <div className="w-full max-w-md p-8 mt-50 bg-base-200 shadow-xl rounded-lg">
         <h2 className="text-2xl font-bold text-center mb-4">Chat Room</h2>
-        <div className="mb-4 overflow-y-auto h-64 border p-2 rounded-lg">
+        <div className="mb-4 overflow-y-auto h-64 border p-2 rounded-lg"
+        ref={messagesEndRef}>
           {messages.map((msg, index) =>
             msg.received ? (
               <div key={index} className="chat chat-start">
