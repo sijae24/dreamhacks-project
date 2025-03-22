@@ -222,7 +222,7 @@ const Chat = () => {
                     {msg.timestamp}
                   </time>
                 </div>
-                <div className="chat-bubble chat-blue-500 text-white">
+                <div className="chat-bubble bg-blue-500 text-white">
                   <ReactMarkdown>{msg.message}</ReactMarkdown>
                 </div>
               </div>
